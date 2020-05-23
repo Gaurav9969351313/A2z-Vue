@@ -1,0 +1,1382 @@
+
+npm install -g @vue/cli
+vue create vuecrud
+npm install vue-router axios vue-axios --save
+npm install bootstrap --save
+
+................................................................................................................
+:: ADD ROUTING PROGRESS BAR INDICATOR.
+
+npm install nprogress --save
+
+main.js
+.......
+import NProgress from 'nprogress';
+import VueRouter from 'vue-router';
+
+
+import '../node_modules/nprogress/nprogress.css';
+
+
+Vue.use(VueRouter);
+
+
+const routes = [
+  {
+    name: 'Create',
+    path: '/create',
+    component: Create
+  },
+  {
+    name: 'Edit',
+    path: '/edit',
+    component: Edit
+  },
+  {
+    name: 'Index',
+    path: '/index',
+    component: Index
+  },
+];
+
+const router = new VueRouter({ mode: 'history', routes: routes });
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>> Router Hooks Started <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+router.beforeResolve((to, from, next) => {
+  if (to.name) {
+      NProgress.start()
+  }
+  next()
+});
+
+router.afterEach(() => {
+  NProgress.done()
+});
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>> Router Hooks Ended <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+new Vue({
+  render: h => h(App),
+  router
+}).$mount('#app')
+
+
+
+Now, we need to add a hook to the router object. So when we change the route, it starts the progress bar at the top and when the routing process finishes, we need to stop that progress bar from showing in the header.
+
+................................................................................................................
+
+### Experiment 1
+
+<div id="root">
+<h1>
+	This is hello world
+</h1>
+</div>
+
+
+new Vue({
+	el: "#root"
+})
+................................................................................................................
+
+### Experiment 2
+
+    <div v-if="1 == 2">
+        <h2> Shree Swami Samartha </h2>
+    </div>
+    
+
+................................................................................................................
+
+
+### Experiment 3
+
+<div v-if="count == 2">
+     <h2> Shree Swami Samartha </h2>
+</div>
+    
+export default {
+  name: 'App',
+  components: {
+  },
+  data() {
+    return {
+      count: 1
+    }
+  },
+}
+
+................................................................................................................
+
+### Experiment 4: Ladder If Else 
+
+ <div v-if="count == 1">
+        <h2> Shree Swami Samartha </h2>
+    </div>
+    <div v-else-if="count == 2">
+        <h2> Shree Swami Samartha 2 </h2>
+    </div>
+    <div v-else>
+        <h2> Shree Swami Samartha 3</h2>
+    </div>
+
+................................................................................................................
+
+### Experiment 4: v show >> Will Make (display: none) behind the seen
+
+   <div v-show="count == 3 ">
+      <h1> SSS </h1>
+   </div>
+
+................................................................................................................
+### Experiment 5:
+
+ <p v-once> {{ email }} </p> 
+ 
+ {{ email }} <br> Two Way Binding
+
+ <input type="text" id="" v-model="email" :class="{ red: email.length < 2 }">
+
+ <input type="text" id="" v-model="email" :class="[email.length < 2 ? 'red' : 'green' ]">	
+
+ <button id="submit" onclick="alert('signed up')" v-bind:disabled="email.length < 2">Submit</button>
+
+// v-bind:disabled ....<< ShortHand >>.... :disabled  
+
+data() {
+    return {
+      email:'',
+      count: 2
+    }
+  },
+
+................................................................................................................
+
+### Experiment 6:
+ <ul>
+      <li v-for="cat in cats" v-bind:key="cat"> {{ cat }} </li>
+ </ul>
+
+ cats: ['a','b','c','d']
+
+................................................................................................................
+### Experiment 7:
+
+   <input type="text" v-model="newCat" v-on:keyup.enter="addNewCat()">
+    <button v-on:click="addNewCat()">Add Me</button>
+    <!--  v-on:click.prevent.stop -->
+    <ul>
+      <li v-for="cat in cats" v-bind:key="cat"> {{ cat.name }} </li>
+    </ul>
+
+  data() {
+    return {
+      newCat:'',
+      cats: [
+        { name: 'sfsd' },
+        { name: 'sdsdsds' },
+        { name: 'jygjy' },
+        { name: 'ieue' }
+      ]
+    }
+  },
+  methods: {
+    addNewCat() {
+      this.cats.push({ name: this.newCat});
+    }
+  }
+
+................................................................................................................
+
+### Experiment 8: filters
+
+<ul>
+      <li v-for="cat in cats" v-bind:key="cat"> {{ cat.name | capitalize | chaining }} </li>
+    </ul>
+
+ filters: {
+    capitalize: function(value) {
+      return value.toUpperCase();
+    },
+    chaining: function(value) {
+      return value + ' yeah';
+    }
+  }
+................................................................................................................
+
+### Experiment 9: Another Way for filters: computed Methods
+
+<input type="text" v-model="newCat">
+
+{{ GetKittyName }}
+
+computed: {
+    GetKittyName: function() {
+      if( this.newCat.length > 2 ) {
+        return this.newCat + ' correct';
+      }
+      else { return '' }
+    }
+},
+
+................................................................................................................
+### Experiment 11: Custom Components 
+
+vue-class-component reduces the component development process by allowing developers to add data properties and handlers directly as properties to the class.
+
+npm install --save vue-class-component
+
+................................................................................................................
+### Experiment 12: Pass data from parent to child
+
+app.vue (Parent)
+.......
+<template>
+ <Home title="Shree" />
+</template>
+
+<script>
+import Home from './components/Home.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Home
+  }
+}
+</script>
+
+###########################################################################
+Home.vue
+........
+<template>
+    <h2> Title From Parent Component To Child Component : {{ title }} </h2>
+</template>
+
+<script>
+export default {
+ name: 'Home',
+  props: {
+    title: String
+  }
+}
+</script>
+
+
+................................................................................................................
+### Experiment 13: Pass Array From Parent to Child
+
+App.vue
+.......
+
+<Home :catsArr="cats" />
+
+import Home from './components/Home.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Home
+  },
+  data() {
+    return {
+      cats: [
+        { name: 'sfsd' },
+        { name: 'sdsdsds' },
+        { name: 'jygjy' },
+        { name: 'ieue' }
+      ]
+    }
+  },
+}
+
+Home.vue
+........
+<template>
+ <ul>
+      <li v-for="cat in catsArr" v-bind:key="cat"> {{ cat.name }} </li>
+    </ul>
+</template>
+
+<script>
+export default {
+ name: 'Home',
+  props: ['catsArr']
+}
+</script>
+
+
+................................................................................................................
+### Experiment 14: LifeCycle Hooks
+
+ data() {
+    return {
+      cats: [
+        { name: 'sfsd' },
+        { name: 'sdsdsds' },
+        { name: 'jygjy' },
+        { name: 'ieue' }
+      ]
+    }
+  },
+  created() {
+    console.log('created');
+  },
+  mounted() {
+    console.log("mounted")
+  },
+  updated() {
+    console.log("updated")
+  },
+  destroyed() {
+    console.log("destroyed")
+  },
+
+beforeCreate : The beforeCreate hook runs at the very initialization of your component. data has not been made reactive, and events have not been set up yet.
+
+mounting: 
+	Use if: You need to access or modify the DOM of your component immediately before or after the initial render.
+
+	Do not use if: You need to fetch some data for your component on initialization. Use created (or created + activated for keep-alive components) for this 	instead, especially if you need that data during server-side rendering.
+
+mounted: 
+	In the mounted hook, you will have full access to the reactive component, templates, and rendered DOM (via. this.$el). Mounted is the most-often used lifecycle hook. The most frequently used patterns are fetching data for your component (use created for this instead,) and modifying the DOM, often to integrate non-Vue libraries.
+
+updated: 
+	Updating hooks are called whenever a reactive property used by your component changes.
+
+	Use if: You need to know when your component re-renders, perhaps for debugging or profiling.
+
+beforeDestroy:
+	is fired right before teardown. Your component will still be fully present and functional. If you need to cleanup events or reactive subscriptions, 	beforeDestroy would probably be the time to do it.
+
+................................................................................................................
+### Experiment 15: 
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+
+<style scoped>
+
+</style>
+
+................................................................................................................
+### Experiment 16: Install Bootstrap and dev tools 
+
+npm install vue bootstrap-vue bootstrap
+
+https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?hl=en
+
+................................................................................................................
+### Experiment 17: Component Communication >> (Parent To Child)
+
+
+<template> 
+	<div>
+		<!-- For Static Content -->
+		<ChildComponent message="Hi Their"></ChildComponent>
+
+		<!-- For Dynamic Content -->
+		<ChildComponent :message="msg"></ChildComponent>
+	</div>
+</template>
+
+<script>
+import ChildComponent from './component/child'
+
+export default {
+	name: 'ParentComponent',
+	data() : {
+		return {
+			msg: 'Some Message'
+		}
+	},
+	components: {
+		ChildComponent
+	}
+}
+
+</script>
+###################################################
+<template> 
+	<div>
+            {{ message }}
+	</div>
+</template>
+
+<script>
+
+export default {
+	name: 'ChildComponent',
+	props: {
+		message: String
+	}
+}
+
+</script>
+
+In our child component, we have added an input argument “message” along with the data type “String”.
+Props provide only one-way communication from a parent to child but vice-versa is not possible
+
+what if you want to call a method inside child component when the value is changed.
+
+<script>
+
+export default {
+	name: 'ChildComponent',
+	methods: {
+		changedMe() {
+			alert('Called this function');
+		}
+	},
+	props: {
+		message: String
+	},
+	watch: {
+		'message': function() {
+			this.changedMe()
+		}	
+	}
+}
+................................................................................................................
+### Experiment 18: Component Communication (Child To Parent)
+
+child.component.js
+..................
+<template> 
+	<div>
+		<h3> this is child component </h3>
+	</div>
+</template>
+
+<script>
+
+export default {
+	name: 'ChildComponent',
+	methods: {
+		sendMessageToParent() {
+			this.$emit('messageFromChild', arg1);
+		}
+	}
+}
+
+</script>
+x
+parent.component.js
+...................
+<template> 
+	<div>
+		<ChildComponent @messageFromChild="childMessageReceived" />
+	</div>
+</template>
+
+<script>
+
+import ChildComponent from './component/child'
+
+export default { 
+	name: 'ParentComponent',
+	methods: {
+		childMessageReceived(arg1) {
+			console.log('message from child', arg1)
+		}		
+ 	},
+	components: {
+		ChildComponent
+	}
+}
+
+</script>
+................................................................................................................
+### Experiment 19: Communication between any components using Event Bus
+
+Event Bus is not limited to a parent-child relation. You can share information between any components.
+
+<script>
+export default { 
+	name: 'AbcComponent',
+	methods: {
+		sendMessageToParent() {
+			this.$root.$emit('msgFromAbcEvent', arg1);
+		}
+	}
+}
+</script>
+
+###############################################
+
+<script>
+export default { 
+	name: 'AbcComponent',
+	mounted() { 
+		this.$root.$on('msgFromAbcEvent', (arg1) => {
+			console.log('message from abc');
+		})
+	}
+}
+................................................................................................................
+### Experiment 20: Custom Directive
+
+Hooks:
+	bind(el, binding, vnode)  >> Once Directive is attached
+	( this occurs once when the directive is attached to the element. ) 
+
+	inserted(el, binding, vnode)  >> Inserted in parent node 
+	( this occurs once the element is inserted into the parent DOM )
+
+	update(el, binding, vnode, oldVnode) >> Once the component is updated ( without children ) 
+	( this occurs when the element updates, but children haven't been updated yet )
+
+	componentUpdated(el, binding, vnode, oldnode) >> once component is updated (with children) 
+	(this occurs once the component and the children have been updated)
+
+	unbind(el, binding, vnode) >> Once Directive is removed 
+	( this occurs once the directive is removed )
+
+el 	>> (the element the binding sits on)
+
+binding >> an object which contains the arguments that are passed into the hooks. There are many available arguments including name, value, oldValue, expression, arg 	   and modifiers.	
+
+vnode 	>> allows you to refer directly to the node in the virtual DOM if you need to.
+
+main.js
+.......
+
+Global Directive Mounting
+
+#dem01
+......
+
+Vue.directive("hook-demo", {
+  bind(el, binding, vnode) {
+    console.log("bind");
+  },
+  inserted(el, binding, vndoe) {
+    console.log("inserted");
+  },
+  updated(el, binding, vnode) {
+    console.log("updated");
+  },
+  componentUpdated(el, binding, vnode, oldVnode) {
+    console.log("componentUpdated");
+  }
+});
+
+##################################################
+
+#dem02
+......
+Vue.directive("format", function(el, binding, vnode) {
+  const modifiers = binding.modifiers;
+if (modifiers.underline) {
+    el.style.textDecoration = "underline";
+  }
+if (modifiers.bold) {
+    el.style.fontWeight = "bold";
+  }
+if (modifiers.highlight) {
+    el.style.background = "#ffff00";
+  }
+}); 
+
+##################################################
+
+#dem03
+......
+Vue.directive("heighlight", { 
+  bind(el) {
+    el.style.backgroundColor = 'green';
+  }
+})
+
+########################################################
+
+########## Passing Values to custom directive ########## 
+
+<h2 v-heighlight="'red'" >  This is cutom directive </h2>
+
+
+Vue.directive("heighlight", { 
+  bind(el,binding) {
+    el.style.backgroundColor = binding.value;
+  }
+})
+
+########## Passing arguments to custom directive #################### 
+
+<h2 v-heighlight:background="'red'" >  This is cutom directive </h2>
+
+Vue.directive("heighlight", { 
+  bind(el,binding) {
+  	if(binding.arg == 'background') {
+		 el.style.backgroundColor = binding.value;
+	} else {
+		 el.style.color = binding.value;
+	}
+  }
+})
+
+################ Modyfying custom directive by modifiers ###################
+
+<h2 v-heighlight:background.delayed="'red'" >  This is cutom directive </h2>
+
+Vue.directive("heighlight", { 
+  bind(el,binding) {
+	var delay = 0;
+
+	if(binding.modifiers['delayed']) {
+		delay = 3000;	
+	}
+	setTimeout(() => {
+		if(binding.arg == 'background') {
+			el.style.backgroundColor = binding.value;
+		} else {
+		 	el.style.color = binding.value;
+		}
+
+	}, delay)
+  	
+  }
+})
+
+###################### Local Directives ####################
+
+<script>
+	export default {
+		directives: {
+			'local-heighlight': {
+				bind(el, binding, node) {
+					var delay = 0;
+
+					if(binding.modifiers['delayed']) {
+						delay = 3000;	
+					}
+					setTimeout(() => {
+						if(binding.arg == 'background') {
+							el.style.backgroundColor = binding.value;
+						} else {
+		 					el.style.color = binding.value;
+						}
+
+					}, delay)
+				}
+			}
+		}
+	}
+</script>
+
+
+###################### Passing Complex values to custom directive ####################
+
+
+<h2 v-heighlight:background.delayed.blink="{ mainColor: 'red' , secondColor: 'green' }" >  This is cutom directive </h2>
+
+<script>
+	export default {
+		directives: {
+			'local-heighlight': {
+				bind(el, binding, node) {
+					var delay = 0;
+
+					if(binding.modifiers['delayed']) {
+						delay = 3000;	
+					}
+					if(binding.modifiers['blink']) {
+						let secondColor = binding.value.secondColor;
+						let mainColor = binding.value.mainColor;
+					}
+					setTimeout(() => {
+						if(binding.arg == 'background') {
+							el.style.backgroundColor = binding.value;
+						} else {
+		 					el.style.color = binding.value;
+						}
+
+					}, delay)
+				}
+			}
+		}
+	}
+</script>
+................................................................................................................
+### Experiment 21: Add Http Call Support in Vue
+
+
+https://github.com/pagekit/vue-resource/blob/develop/docs/http.md
+
+npm install --save vue-resource
+
+main.js
+.......
+
+var VueResource = require('vue-resource');
+Vue.use(VueResource);
+
+.............................................
+
+this.$http.get('/someUrl').then(response => {
+
+    // get body data
+    this.someData = response.body;
+
+  }, response => {
+    // error callback
+  });
+
+
+................................................................................................................
+### Experiment 22: Form Handling
+
+
+<b-form-input v-model="user.username" placeholder="Enter your name"></b-form-input>
+<b-form-input v-model="user.password" placeholder="Enter your password"></b-form-input>
+<b-button variant="danger" @click="submit" >Button</b-button>
+
+data() {
+	return {
+		 user: {
+         		username: "",
+         		password: ""
+      		} 
+	}
+},
+methods: {
+  submit() {
+      console.log(this.user)
+    }
+}
+................................................................................................................
+### Experiment 23: Vue Routting In Details
+
+npm install vue-router
+
+
+main.js
+.......
+import VueRouter from 'vue-router';
+import App from './App.vue'
+import { routes } from './routes';
+
+Vue.use(VueRouter);
+
+const router = new VueRouter({
+	routes
+})
+
+new Vue({
+	el: '#app',
+	router,
+	render: h=> h(App)
+}) 
+
+routes.js
+.........
+
+import User from './components/user/User.vue';
+import Home from './components/Home.vue';
+
+export const routes = [
+	{ path: '', component: Home },
+	{ path: '/user', component:  }
+]
+
+
+app.vue
+.......
+
+<router-view> </router-view>
+
+########## Location Hash Strategy #########
+When the router navigates to a new component view, it updates the browser's location and history with a URL for that view. This is a strictly local URL. The browser shouldn't send this URL to the server and should not reload the page.
+
+HashLocationStrategy
+Older browsers send page requests to the server when the location URL changes unless the change occurs after a # (called the hash). Routers can take advantage of this exception by composing in-application route URLs with hashes.
+
+It produces URLs that are easier for users to understand.
+It preserves the option to do server-side rendering later.
+Rendering critical pages on the server is a technique that can greatly improve perceived responsiveness when the app first loads. An app that would otherwise take ten or more seconds to start could be rendered on the server and delivered to the user's device in less than a second.
+
+This option is only available if application URLs look like normal web URLs without hashes (#) in the middle.
+
+Stick with the default unless you have a compelling reason to resort to hash routes.
+
+const router = new VueRouter({
+	routes,
+	mode: 'history' 
+})
+
+
+mode: 'history' >> default mode (No hash strategy)
+
+available values: "hash" | "history" | "abstract"
+
+Configure the router mode.
+
+hash: uses the URL hash for routing. Works in all Vue-supported browsers, including those that do not support HTML5 History API.
+
+history: requires HTML5 History API and server config. See HTML5 History Mode.
+
+abstract: works in all JavaScript environments, e.g. server-side with Node.js. The router will automatically be forced into this mode if no browser API is present.
+
+# base
+
+####################### Router Link ##################3
+
+Documentation: 
+..............
+
+https://router.vuejs.org/api/#scrollbehavior
+
+<!-- literal string -->
+<router-link to="home">Home</router-link>
+<!-- renders to -->
+<a href="home">Home</a>
+
+<!-- javascript expression using `v-bind` -->
+<router-link v-bind:to="'home'">Home</router-link>
+
+<!-- Omitting `v-bind` is fine, just as binding any other prop -->
+<router-link :to="'home'">Home</router-link>
+
+<!-- same as above -->
+<router-link :to="{ path: 'home' }">Home</router-link>
+
+<!-- named route -->
+<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+
+<!-- with query, resulting in `/register?plan=private` -->
+<router-link :to="{ path: 'register', query: { plan: 'private' }}">Register</router-link>
+
+
+########### Styling Active Links ###########
+
+<ul class="nav nav-pills">
+<router-link to="/" tag="li" active-class="active" exact><a>Home</a><router-link>
+<router-link to="/user" tag="li" active-class="active"><a>User</a><router-link>
+</ul>
+
+########## Impressive Navigation ##########
+Navigation from js code 
+
+<button @click="navigateToHome" class="btn btn-primary"> Go To Home</button>
+
+methods: {
+	navigateToHome() {
+		this.$router.push({ path:'/' })
+	}
+}
+
+######### Passing Parameters to route ###### 
+
+export const routes = [
+	{ path: '/user/:id', component:User  }
+]
+
+
+<router-link to="/user/10" tag="li" active-class="active"><a>User</a><router-link>
+
+######## Retrive Paramters in Js ######
+<p> Loaded Id:  {{ id }} </p>
+
+<button @click="navigateToHome" class="btn btn-primary">Go To Home</button>
+
+data() {
+	return {
+		id: this.$route.params.id
+	}
+},
+methods: {
+	navigateToHome() {
+		this.$router.push({ path:'/' })
+	}
+}
+
+####### React To Router Params Change ########
+
+watch: {
+	'$route'(to, from) {
+		this.id = to.params.id;
+	}  
+}
+
+###### Setting Up Nested Routes ###### 
+
+
+Note: As we are setting up a nested route in the route.js file for Component User, user component require a <router-view> </router-view>
+
+
+user.vue
+........
+
+<ul class="nav nav-pills">
+<router-link to="/user" tag="li" active-class="active"><a>User</a><router-link>
+</ul>
+
+
+route.js
+........
+export const routes = [
+	{ path: '/user/:id', component:User, children: [		
+			{ path: '', component: UserStart }
+		]  
+	}
+]
+
+
+###### navigating Nested Routes #############
+
+userStart.vue
+........
+<router-link :to="/user/1" tag="li" active-class="active"><a>User 1</a><router-link>
+<router-link :to="/user/2" tag="li" active-class="active"><a>User 2</a><router-link>
+<router-link :to="/user/3" tag="li" active-class="active"><a>User 3</a><router-link>
+
+userDetails.vue
+...............
+
+<template>
+<div> 
+	<h1> User Details </h1>
+	<h4> User ID : {{ $route.params.id }} </h4>
+</div>
+</template>
+
+
+route.js
+........
+export const routes = [
+	{ path: '/user/:id', component:User, children: [		
+			{ path: '', component: UserStart },
+			{ path: ':id', component: UserDetails },
+			{ path: ':id/edit', component: UserEdit },
+		]  
+	}
+]
+
+######### Making More Dynamic Routes ########
+userDeatils.vue
+
+<router-link tag="button" :to="'/user/' + $route.params.id + '/edit'" tag="li" active-class="active">Edit User<router-link>
+
+
+####### Better Way Of Creating a link #####
+
+route.js
+........
+export const routes = [
+	{ path: '/user/:id', component:User, children: [		
+			{ path: '', component: UserStart },
+			{ path: ':id', component: UserDetails },
+			{ path: ':id/edit', component: UserEdit, name : 'userEdit' },
+		]  
+	}
+]
+
+<router-link tag="button" :to="{ name: 'userEdit', params: { id: $route.params.id } }" tag="li" active-class="active">Edit User<router-link>
+
+
+###### Not Found Route Configurations #######
+
+ routes: [
+    { path: '*', component: NotFoundComponent }
+  ]
+
+####### Using Query Parameters #####
+
+<router-link tag="button" :to="{ name: 'userEdit', params: { id: $route.params.id }, query: { locale: 'en', q:100 } }" tag="li" active-class="active">Edit User<router-link>
+
+<template> 
+<div> 
+	<h3> Edit User </h3>
+	<p> locale: {{ $route.query.locale }} </p>
+	<p> anything : {{ $route.query.q }} </p>
+</div>
+</template>
+
+########## Multiple Router Views ##########
+
+<router-view name="header-top"></router-view>
+<router-view></router-view>
+<router-view name="header-bottom"></router-view>
+
+route.js
+........
+export const routes = [
+	{ path: '/user', name: 'home', components: { default: Home,
+		'header-top': Header	
+	 } },
+	{ path: '/user/:id', component:User, children: [		
+			{ path: '', component: UserStart },
+			{ path: ':id', component: UserDetails },
+			{ path: ':id/edit', component: UserEdit, name : 'userEdit' },
+		]  
+	}
+]
+
+########## Redirecting ##########
+export const routes = [ 
+	{ path: 'redirectme', redirect: '/user' }
+]
+
+export const routes = [ 
+	{ path: 'redirectme', redirect: { name: 'user' } }
+]
+
+########## Generic Catch all Route ###########
+
+{ path: "*", redirect: '/' }
+
+########## Animating Route Transition ########
+
+
+<router-view name="header-top"></router-view>
+<transition name="slide" mode="out-in">
+<router-view></router-view>
+</transition>
+<router-view name="header-bottom"></router-view>
+
+
+####### Passing the hash fragment #######
+
+UserEdit.vue
+............
+
+<div style="height: 700px;"> </div>
+<p id="data"> Some extra data </p>
+
+now localhost:8080/edit#data
+
+
+######################################
+
+<router-link tag="button" :to="link" tag="li" active-class="active">Edit User<router-link>
+
+export default {
+	data() {
+		return {
+ 			link: { name: 'userEdit', 
+				params: { id: $route.params.id }, 
+				query: { locale: 'en', q:100 },
+				hash : '#data'  
+			}
+		}
+	}
+}
+
+################## Scroll Behavior ###############
+const router = new VueRouter({
+	routes,
+	mode: 'history' ,
+	scrollBehavior(to,from,savedPosition) {
+	if(to.hash) {
+		return { selector: to.hash }
+	} 
+		return { x:0, y: 0 };
+	}
+})
+
+router.beforeEach((to,from,next ) => {
+	console.log('global beforeEach');
+	next() // { path : '/home'   }
+})
+
+################# Route Guards ###########
+
+#####   beforeEnter
+
+{ path: ':id', component: UserDetail, beforeEnter: (to,from,next) => { console.log('in Before Enter'); next(); } }
+
+or 
+
+in UserDetail.vue
+.................
+beforeRouteEnter(to,from,next) {
+	// this.link or so will not work component not initislaised
+	next(vm = { console.log(vm.link); });
+}
+
+
+##### beforeLeave
+
+<button class="btn btn-primary" @click="confirmed = true"> confirm </button>
+
+export default {
+	data () {
+		return {
+			confirmed: false
+		}
+	},
+	beforeRouterLeave(to, from, next) {
+		if(this.confirmed) {
+			next()	
+		} else {
+			if(confirm('are you sure')){
+				next()
+			}
+			else {
+				next(false);
+			}
+		}
+		next();
+	}
+
+
+}
+
+
+beforeLeave()
+
+................................................................................................................
+### Experiment 24: Lazy Loading in Vue JS
+
+// webpack.config.js
+optimization: {
+  splitChunks: {
+    chunks: 'all'
+  }
+}
+
+or
+
+// router.js 
+const routes = [
+  { path: '/', component: () => import('./Home.vue') }
+  { path: '/about', component: () => import('./About.vue') }
+]
+
+or
+
+// router.js 
+
+const User  = resolve  => {
+		require.ensure(['./components/user/User.vue'], ()  => {
+			resolve(require('./components/user/User.vue'))
+		})
+	} 
+
+now all bundles are different 
+
+................................................................................................................
+### Experiment 25:
+
+
+................................................................................................................
+d### Experiment 26:
+
+
+................................................................................................................
+### Experiment 27:
+
+
+................................................................................................................
+### Experiment 28:
+
+
+................................................................................................................
+### Experiment 29:
+
+
+................................................................................................................
+### Experiment 30:
+
+
+................................................................................................................
+### Experiment 31:
+
+
+................................................................................................................
+### Experiment 32:
+
+
+................................................................................................................
+### Experiment 33:
+
+
+................................................................................................................
+### Experiment 34:
+
+
+................................................................................................................
+### Experiment 35:
+
+
+................................................................................................................
+### Experiment 36:
+
+
+................................................................................................................
+### Experiment 37:
+
+
+................................................................................................................
+### Experiment 38:
+
+
+................................................................................................................
+### Experiment 39:
+
+
+................................................................................................................
+### Experiment 40:
+
+
+................................................................................................................
+### Experiment 41:
+
+
+................................................................................................................
+### Experiment 42:
+
+
+................................................................................................................
+### Experiment 43:
+
+
+................................................................................................................
+### Experiment 44:
+
+
+................................................................................................................
+### Experiment 45:
+
+
+................................................................................................................
+### Experiment 46:
+
+
+................................................................................................................
+### Experiment 47:
+
+
+................................................................................................................
+### Experiment 48:
+
+
+................................................................................................................
+### Experiment 49:
+
+
+................................................................................................................
+### Experiment 50: Deploye Vue Application To IIS Server
+
+Internet Information Services (IIS)
+ 
+
+1. Install IIS UrlRewrite
+2. Create a web.config file in the root directory of your site with the following
+
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="Handle History Mode and custom 404/500" stopProcessing="true">
+          <match url="(.*)" />
+          <conditions logicalGrouping="MatchAll">
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="/" />
+        </rule>
+      </rules>
+    </rewrite>
+  </system.webServer>
+</configuration>
+
+###### Using Axios Instead of vue-resource ###### 
+
+npm run --save axios
+
+.vue
+....
+import axios from 'axios'
+
+ mounted () {
+    axios
+      .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .then(response => (this.info = response))
+      .catch(error => {
+        console.log(error)
+        this.errored = true
+      })
+      .finally(() => this.loading = false)
+  }
+
+
+async postPost() {
+    try {
+       await axios.post(`http://jsonplaceholder.typicode.com/posts`, {
+         body: this.postBody
+       })
+     } catch (e) {
+       this.errors.push(e)
+     }
+}
+    
+     
+##### Setting Global Request Configuration ######
+
+axios.defaults.baseURL = 'https://api.example.com';
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+
+
+###### Interceptors #######
+
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    return config;
+  }, function (error) {
+    return Promise.reject(error);
+  });
+
+// Add a response interceptor
+axios.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  }, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+  });
+
+####### If you need to remove an interceptor later you can. ####### 
+
+const myInterceptor = axios.interceptors.request.use(function () {/*...*/});
+axios.interceptors.request.eject(myInterceptor);
+
+####### Create a new instance of axios #######
+axiosForAnotherService.js
+..........................
+
+import axios from 'axios'
+
+const instance = axios.create({
+  baseURL: 'https://some-domain.com/api/',
+  timeout: 1000,
+  headers: {'X-Custom-Header': 'foobar'}
+});
+
+instance.defaults.headers.common["Authorisation"] = "basic jaskdjaskjdaksjdasdjad"
+
+export default instance
+
+.................................................................................
+
+###### Authentication ########
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
